@@ -349,6 +349,11 @@ export default function TripPlannerPage() {
                             ? new Date(answers.start_date as string)
                             : new Date()
                         }
+                        maxDate={
+                          field.id === "end_date" && answers.start_date
+                            ? new Date(new Date(answers.start_date).setDate(new Date(answers.start_date).getDate() + 10))
+                            : new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                        }
                         placeholderText={field.placeholder || "Select date"}
                         dateFormat="MMMM d, yyyy"
                         className="w-full p-4 pl-4 pr-12 bg-white border border-gray-500 rounded-xl transition-all duration-200 hover:border-gray-300"
@@ -442,14 +447,7 @@ export default function TripPlannerPage() {
                     </div>
                     {field.id === "end_date" && answers.start_date && (
                       <p className="mt-2 text-sm text-gray-500">
-                        Must be after{" "}
-                        {new Date(
-                          answers.start_date as string
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        Can generate itinerary for up to 10 days after the start date.
                       </p>
                     )}
                   </div>

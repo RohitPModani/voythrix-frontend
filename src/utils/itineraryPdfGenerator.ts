@@ -165,52 +165,6 @@ const generateItineraryPDF = (itinerary: Itinerary) => {
       });
     }
 
-    // Dining options
-    if (day.dining) {
-      if (yPos > 230) {
-        doc.addPage();
-        yPos = 20;
-      }
-      doc.setFontSize(14);
-      doc.setTextColor(41, 98, 255);
-      doc.text('Dining Options', 15, yPos);
-      yPos += 8;
-
-      const renderDiningSection = (title: string, options: any[]) => {
-        if (!options || options.length === 0) return;
-        
-        doc.setFontSize(12);
-        doc.setTextColor(51, 51, 51);
-        doc.text(title, 20, yPos);
-        yPos += 6;
-
-        options.forEach(option => {
-          const diningData = [
-            ['Name', option.name],
-            ['Cuisine', option.cuisine],
-            ['Cost Range', option.cost_range]
-          ];
-          
-          if (option.recommended_dishes && option.recommended_dishes.length > 0) {
-            diningData.push(['Recommended', option.recommended_dishes.join(", ")]);
-          }
-
-          autoTable(doc, {
-            startY: yPos,
-            body: diningData,
-            theme: 'grid',
-            styles: { fontSize: 11, cellPadding: 3 },
-            columnStyles: { 0: { cellWidth: 40 }, 1: { cellWidth: 140 } },
-          });
-          yPos = (doc as any).lastAutoTable.finalY + 10;
-        });
-      };
-
-      renderDiningSection('Breakfast:', day.dining.breakfast);
-      renderDiningSection('Lunch:', day.dining.lunch);
-      renderDiningSection('Dinner:', day.dining.dinner);
-    }
-
     // Important notes
     if (day.important_notes && day.important_notes.length > 0) {
       if (yPos > 230) {
@@ -240,10 +194,51 @@ const generateItineraryPDF = (itinerary: Itinerary) => {
     }
   });
 
-  // Accommodation section
-  if (itinerary.accommodation && itinerary.accommodation.length > 0) {
+  // Dining section
+  if (itinerary.dining && itinerary.dining.length > 0) {
     doc.addPage();
     yPos = 20;
+    
+    doc.setFontSize(18);
+    doc.setTextColor(41, 98, 255);
+    doc.text('Dining', 15, yPos);
+    yPos += 10;
+
+    itinerary.dining.forEach(dining => {
+      doc.setFontSize(14);  
+      doc.setTextColor(41, 98, 255);
+      doc.text(dining.city, 15, yPos);
+      yPos += 8;
+
+      const diningData = dining.meal_options.map(meal => [
+        meal.meal_type,
+        meal.restaurants.map(restaurant => restaurant.name).join(', '),
+        meal.restaurants.map(restaurant => `${restaurant.price_range.low}-${restaurant.price_range.high} ${restaurant.price_range.currency}`).join(', ')
+      ]);
+
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Meal Type', 'Restaurant', 'Price Range']],
+        body: diningData,
+        theme: 'grid',
+        styles: { fontSize: 11, cellPadding: 3 },
+        headStyles: { fillColor: [41, 98, 255], textColor: 255 },
+        columnStyles: { 
+          0: { cellWidth: 70 },
+          1: { cellWidth: 50 },
+          2: { cellWidth: 60 }
+        },
+      });
+      yPos = (doc as any).lastAutoTable.finalY + 15;
+    });
+  }
+
+  // Accommodation section
+  if (itinerary.accommodation && itinerary.accommodation.length > 0) {
+    if (yPos > 230) {
+      doc.addPage();
+      yPos = 20;
+    }
     
     doc.setFontSize(18);
     doc.setTextColor(41, 98, 255);

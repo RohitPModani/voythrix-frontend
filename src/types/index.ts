@@ -66,26 +66,6 @@ export interface DayItinerary {
     notes?: string;
     cost?: string;
   }>;
-  dining?: {
-    breakfast?: Array<{
-      name: string;
-      cuisine?: string;
-      cost?: string;
-      notes?: string;
-    }>;
-    lunch?: Array<{
-      name: string;
-      cuisine?: string;
-      cost?: string;
-      notes?: string;
-    }>;
-    dinner?: Array<{
-      name: string;
-      cuisine?: string;
-      cost?: string;
-      notes?: string;
-    }>;
-  };
   transportation?: Array<{
     type: string;
     route?: string;
@@ -93,7 +73,6 @@ export interface DayItinerary {
     duration?: string;
   }>;
   daily_budget_estimate?: string;
-  important_notes?: string[];
 }
 
 export interface Location {
@@ -133,10 +112,27 @@ export interface DiningOption {
   notes: string[];
 }
 
-export interface DayDining {
-  breakfast: DiningOption[];
-  lunch: DiningOption[];
-  dinner: DiningOption[];
+export interface Dining {
+  city: string;
+  meal_options: MealOption[];
+}
+
+export interface MealOption {
+  meal_type: string; // e.g., breakfast, lunch, dinner
+  restaurants: Restaurant[];
+}
+
+export interface Restaurant {
+  name: string;
+  cuisine: string;
+  price_range: {
+    low: string;
+    high: string;
+    currency: string;
+  };
+  address: string;
+  pros: string[];
+  cons: string[];
 }
 
 export interface Transportation {
@@ -162,7 +158,6 @@ export interface Day {
   morning: Activity[];
   afternoon: Activity[];
   evening: Activity[];
-  dining: DayDining;
   transportation: Transportation[];
   daily_budget_estimate: DailyBudgetEstimate;
   important_notes: string[];
@@ -178,17 +173,11 @@ export interface AccommodationRecommendation {
   };
   location: {
     address: string;
-    coordinates: string;
     proximity_highlights: string[];
   };
   amenities: string[];
   pros: string[];
   cons: string[];
-  booking_info: {
-    platform: string;
-    link: string;
-    notes: string;
-  };
 }
 
 export interface Accommodation {
@@ -247,6 +236,7 @@ export interface Itinerary {
     end_date: string;
   };
   days: Day[];
+  dining: Dining[];
   accommodation: Accommodation[];
   essential_information: EssentialInformation;
   total_budget_estimate: TotalBudgetEstimate;

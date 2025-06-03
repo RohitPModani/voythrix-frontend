@@ -12,13 +12,13 @@ import {
   Shield,
   Briefcase,
   Camera,
+  Utensils,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import generateItineraryPDF from "../utils/itineraryPdfGenerator";
 import {
   Itinerary,
   Activity as ActivityType,
-  DiningOption,
 } from "../types/index";
 
 export default function ItineraryPage() {
@@ -76,45 +76,6 @@ export default function ItineraryPage() {
             {activity.booking_info.instructions}
           </div>
         )}
-      </div>
-    </div>
-  );
-
-  const renderDiningSection = (title: string, options: DiningOption[]) => (
-    <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-      <h5 className="capitalize text-lg font-medium text-gray-900 mb-4">
-        {title}
-      </h5>
-      <div className="space-y-4">
-        {options.map((option, index) => (
-          <div key={index} className="bg-white rounded-lg p-4">
-            <h6 className="font-medium text-gray-900">{option.name}</h6>
-            <p className="text-sm text-gray-600 mt-1">{option.cuisine}</p>
-            <p className="text-sm font-medium text-blue-600 mt-1">
-              {option.cost_range}
-            </p>
-            {option.recommended_dishes &&
-              option.recommended_dishes.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm font-medium text-gray-700">
-                    Recommended:
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {option.recommended_dishes.join(", ")}
-                  </p>
-                </div>
-              )}
-            {option.notes && option.notes.length > 0 && (
-              <div className="mt-2 text-sm text-gray-500">
-                {option.notes.map((note, index) => (
-                  <div key={index} className="italic">
-                    • {note}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -333,23 +294,6 @@ export default function ItineraryPage() {
                 </div>
               )}
 
-              {/* Dining Information */}
-              {day.dining && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Dining Options
-                  </h4>
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {day.dining.breakfast &&
-                      renderDiningSection("Breakfast", day.dining.breakfast)}
-                    {day.dining.lunch &&
-                      renderDiningSection("Lunch", day.dining.lunch)}
-                    {day.dining.dinner &&
-                      renderDiningSection("Dinner", day.dining.dinner)}
-                  </div>
-                </div>
-              )}
-
               {/* Transportation */}
               {day.transportation && day.transportation.length > 0 && (
                 <div className="mb-8">
@@ -442,6 +386,121 @@ export default function ItineraryPage() {
             </div>
           ))}
         </div>
+
+        {/* Dining */}
+        {itinerary.dining && (
+          <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+            <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-blue-50 to-teal-50 flex items-center justify-center">
+                  <Utensils className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-semibold text-gray-900">
+                    Dining
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Recommended places to eat during your trip
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 sm:p-8 grid grid-cols-1 gap-6">
+              {itinerary.dining.map((dining, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {dining.city}
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {dining.meal_options.map((meal, recIndex) => (
+                      <div
+                        key={recIndex}
+                        className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="font-medium text-gray-900">
+                              {meal.meal_type}
+                            </h4>
+                            <div className="grid grid-cols-1 gap-4">
+                              {meal.restaurants.map((restaurant, resIndex) => (
+                                <div
+                                  key={resIndex}
+                                  className="mt-4 border-b border-gray-200/80 p-4 border-dashed bg-gradient-to-r from-blue-50 to-teal-50"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <div>
+                                      <h5 className="text-sm font-medium text-gray-900">
+                                        {restaurant.name}
+                                      </h5>
+                                      <p className="text-xs text-gray-600">
+                                        {restaurant.cuisine}
+                                      </p>
+                                      <div className="mt-2 flex items-center gap-1">
+                                        <span className="text-xs font-medium text-blue-600">
+                                          {restaurant.price_range.currency}{" "}
+                                          {restaurant.price_range.low} -{" "}
+                                          {restaurant.price_range.high}
+                                        </span>
+                                      </div>
+                                      <div className="mt-2 space-y-1">
+                                        <p className="text-xs text-gray-500">
+                                          Address: {restaurant.address}
+                                        </p>
+                                        <div className="flex flex-wrap gap-1">
+                                          <p className="text-xs text-gray-500 italic">Pros:</p>
+                                          <div className="flex flex-wrap">
+                                            {restaurant.pros.map(
+                                              (pro, proIndex) => (
+                                                <span
+                                                  key={proIndex}
+                                                  className="inline-flex items-center rounded-full text-xs font-medium text-green-600 italic"
+                                                >
+                                                  {'- '}{pro}
+                                                </span>
+                                              )
+                                            )}
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          <p className="text-xs text-gray-500 italic">Cons:</p>
+                                          <div className="flex flex-wrap">
+                                            {restaurant.cons.map(
+                                              (con, conIndex) => (
+                                                <span
+                                                  key={conIndex}
+                                                  className="inline-flex items-center rounded-full text-xs font-medium text-red-600 italic"
+                                                >
+                                                  {'- '}{con}
+                                                </span>
+                                              )
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Accommodation */}
         {itinerary.accommodation && (
@@ -857,11 +916,13 @@ export default function ItineraryPage() {
         {/* Disclaimer */}
         <div className="mt-8 bg-yellow-50/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
           <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
-            <h2 className="text-2xl font-semibold text-gray-900">
-              Disclaimer
-            </h2>
+            <h2 className="text-2xl font-semibold text-gray-900">Disclaimer</h2>
             <p className="text-gray-600">
-              This AI-generated itinerary serves as a starting point for your travel planning. While we strive for accuracy, we recommend verifying details, checking current conditions, and consulting travel professionals when needed. Prices, availability, and conditions may vary.
+              This AI-generated itinerary serves as a starting point for your
+              travel planning. While we strive for accuracy, we recommend
+              verifying details, checking current conditions, and consulting
+              travel professionals when needed. Prices, availability, and
+              conditions may vary.
             </p>
           </div>
         </div>
