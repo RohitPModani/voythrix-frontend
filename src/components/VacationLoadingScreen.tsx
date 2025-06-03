@@ -1,5 +1,4 @@
 import {
-  Loader2,
   Plane,
   MapPin,
   Calendar,

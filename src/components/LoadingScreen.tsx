@@ -1,4 +1,3 @@
-// LoadingScreen.tsx
 import { 
   Plane, 
   MapPin, 
