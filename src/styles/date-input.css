@@ -1,0 +1,181 @@
+/* Custom styles for date input */
+.date-input-custom::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* Style the date input to look modern */
+input[type="date"].date-input-custom {
+  @apply appearance-none;
+}
+
+input[type="date"].date-input-custom:focus {
+  @apply outline-none ring-2 ring-blue-500 border-transparent;
+}
+
+/* Calendar popup styling */
+::-webkit-datetime-edit {
+  @apply py-1;
+}
+
+::-webkit-datetime-edit-fields-wrapper {
+  @apply text-gray-700;
+}
+
+::-webkit-datetime-edit-text {
+  @apply text-gray-500 px-1;
+}
+
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-year-field {
+  @apply text-gray-700 font-medium;
+}
+
+::-webkit-inner-spin-button {
+  display: none;
+}
+
+/* React DatePicker Custom Styles */
+.react-datepicker {
+  @apply font-sans bg-white border-gray-400 rounded-xl shadow-lg;
+  font-size: 1rem;
+}
+
+.react-datepicker-wrapper {
+  @apply w-full;
+}
+
+.react-datepicker__header {
+  @apply bg-white border-b border-gray-100 rounded-t-xl;
+  padding-top: 1rem;
+}
+
+.react-datepicker__current-month {
+  @apply text-gray-700 font-semibold mb-4;
+  font-size: 1.1rem;
+}
+
+.react-datepicker__day-name {
+  @apply text-gray-500;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  font-size: 0.9rem;
+}
+
+.react-datepicker__day {
+  @apply text-gray-700 rounded-lg transition-colors duration-200;
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  font-size: 0.9rem;
+  margin: 0.2rem;
+}
+
+.react-datepicker__day--selected {
+  @apply rounded-lg bg-blue-100 text-black hover:bg-blue-100;
+}
+
+.react-datepicker__day--keyboard-selected {
+  @apply bg-blue-100 text-blue-600;
+}
+
+.react-datepicker__day--disabled {
+  @apply text-gray-300 hover:bg-transparent cursor-not-allowed;
+}
+
+.react-datepicker__navigation {
+  @apply top-4;
+}
+
+.react-datepicker__navigation-icon::before {
+  @apply border-gray-400;
+  border-width: 2px 2px 0 0;
+  height: 9px;
+  width: 9px;
+}
+
+.react-datepicker__day--outside-month {
+  @apply text-gray-300;
+}
+
+/* Position the calendar popup */
+.react-datepicker-popper {
+  @apply z-50;
+}
+
+.react-datepicker-popper[data-placement^=bottom] {
+  @apply mt-2;
+}
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+/* Month and Year Dropdowns */
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container {
+  @apply inline-block mx-2;
+}
+
+.react-datepicker__month-read-view--selected-month,
+.react-datepicker__year-read-view--selected-year {
+  @apply text-gray-700 font-medium text-lg;
+}
+
+.react-datepicker__month-dropdown,
+.react-datepicker__year-dropdown {
+  @apply bg-white border border-gray-100 rounded-lg shadow-lg mt-1 py-2;
+  width: 140px;
+}
+
+.react-datepicker__month-option,
+.react-datepicker__year-option {
+  @apply px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 cursor-pointer transition-colors duration-200;
+  line-height: 1.4;
+}
+
+.react-datepicker__month-option--selected,
+.react-datepicker__year-option--selected {
+  @apply bg-blue-50 text-blue-600 font-medium;
+}
+
+.react-datepicker__month-option--selected_month,
+.react-datepicker__year-option--selected_year {
+  @apply text-blue-600 font-medium;
+}
+
+/* Today's date highlight */
+.react-datepicker__day--today {
+  @apply font-semibold border border-blue-200;
+}
+
+/* Month container */
+.react-datepicker__month-container {
+  @apply p-4;
+}
+
+/* Make sure the calendar has some breathing room */
+.react-datepicker__month {
+  @apply mt-2;
+  margin-left: -0.2rem;
+  margin-right: -0.2rem;
+}
+
+/* Time picker styles if needed */
+.react-datepicker__time-container {
+  @apply border-l border-gray-100;
+}
+
+.react-datepicker__time-box {
+  @apply rounded-none;
+} 
