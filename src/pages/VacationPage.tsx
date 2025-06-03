@@ -1,16 +1,12 @@
-import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { VacationItinerary } from "../types/index";
 import {
   ArrowLeft,
   Download,
-  Printer,
   Globe2,
   DollarSign,
-  Plane,
   Calendar,
   Bus,
-  Shield,
   Activity,
   ShieldCheck,
   MapPin,

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getQuestions, generateItinerary } from "../services/api";
 import { QuestionGroup, TripAnswers } from "../types/index";
 import { useNavigate } from "react-router-dom";
-import { Sparkles, ArrowRight, ArrowLeft, Calendar } from "lucide-react";
+import { ArrowRight, ArrowLeft, Calendar } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../styles/date-input.css";

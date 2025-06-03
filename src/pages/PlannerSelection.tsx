@@ -1,6 +1,5 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const PlannerSelection = () => {
