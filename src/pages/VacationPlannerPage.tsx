@@ -140,7 +140,7 @@ export default function VacationPlannerPage() {
       const formattedAnswers: VacationAnswers = {
         vacation_style: (answers.vacation_style as string[]) || [],
         departure_location: (answers.departure_location as string) || "",
-        start_date: answers.start_date as string,
+        start_date: (answers.start_date as string) || "",
         end_date: (answers.end_date as string) || "",
         budget: (answers.budget as string) || "",
         preferred_region: (answers.preferred_region as string) || "",

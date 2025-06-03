@@ -27,7 +27,7 @@ const LoadingScreen = ({ isReady = false }: LoadingScreenProps) => {
   ];
 
   useEffect(() => {
-    const duration = 150000; 
+    const duration = 60000; 
     const interval = 100;
     const steps = duration / interval;
     const incrementAmount = 100 / steps;

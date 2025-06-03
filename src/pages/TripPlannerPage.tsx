@@ -97,7 +97,7 @@ export default function TripPlannerPage() {
     return group.fields.every((field) => {
       if (!field.required) return true;
       const answer = answers[field.id as keyof TripAnswers];
-      if (field.type === "multi-select" || field.id === "destinations") {
+      if (field.type === "multi-select") {
         return Array.isArray(answer) && answer.length > 0;
       }
       return !!answer;
@@ -139,7 +139,7 @@ export default function TripPlannerPage() {
     try {
       const formattedAnswers: TripAnswers = {
         start_location: (answers.start_location as string) || "",
-        destinations: (answers.destinations as string[]) || [],
+        destinations: (answers.destinations as string) || "",
         budget: (answers.budget as string) || "",
         travel_style: (answers.travel_style as string[]) || [],
         accommodation: (answers.accommodation as string[]) || [],
@@ -147,10 +147,9 @@ export default function TripPlannerPage() {
         group_size: (answers.group_size as string) || "",
         transportation: (answers.transportation as string) || "",
         dietary_restrictions:
-          (answers.dietary_restrictions as string[]) || undefined,
+          (answers.dietary_restrictions as string[]) || [],
         special_requirements:
-          (answers.special_requirements as string[]) || undefined,
-        travel_season: (answers.travel_season as string) || undefined,
+          (answers.special_requirements as string) || "",
         pace: (answers.pace as string) || "Moderate",
         start_date: answers.start_date as string,
         end_date: (answers.end_date as string) || "",
@@ -166,7 +165,7 @@ export default function TripPlannerPage() {
       }
 
       const itinerary = response.trip_itinerary.itinerary;
-      if (!itinerary.summary || !Array.isArray(itinerary.days)) {
+      if (!itinerary.summary || !Array.isArray(itinerary.daily_itinerary)) {
         throw new Error("Invalid itinerary structure");
       }
 
@@ -304,15 +303,12 @@ export default function TripPlannerPage() {
                 ) : field.id === "destinations" ? (
                   <input
                     type="text"
-                    placeholder={
-                      field.placeholder ||
-                      "Enter destinations separated by commas"
-                    }
-                    value={tagInputs[field.id] || ""}
-                    onChange={(e) => handleTagsAnswer(field.id, e.target.value)}
+                    placeholder={field.placeholder || "Enter destinations separated by commas"}
+                    value={answers[field.id as keyof TripAnswers] || ""}
+                    onChange={(e) => handleAnswer(field.id, e.target.value)}
                     className="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   />
-                ) : field.type === "tags" ? (
+                )  : field.type === "tags" ? (
                   <input
                     type="text"
                     placeholder={field.placeholder}

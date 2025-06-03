@@ -6,20 +6,15 @@ import {
   DollarSign,
   Calendar,
   MapPin,
-  Clock,
-  Activity,
-  Star,
-  Shield,
-  Briefcase,
-  Camera,
   Utensils,
+  Hotel,
+  Gem,
+  UtensilsCrossed,
+  HousePlus,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import generateItineraryPDF from "../utils/itineraryPdfGenerator";
-import {
-  Itinerary,
-  Activity as ActivityType,
-} from "../types/index";
+import { Itinerary } from "../types/index";
 
 export default function ItineraryPage() {
   const location = useLocation();
@@ -29,56 +24,6 @@ export default function ItineraryPage() {
   const resetQuiz = () => {
     navigate("/");
   };
-
-  const renderActivity = (activity: ActivityType) => (
-    <div className="flex items-start gap-4">
-      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-blue-50 to-teal-50 flex items-center justify-center">
-        <Clock className="w-5 h-5 text-blue-600" />
-      </div>
-      <div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-500">
-            {activity.time}
-          </span>
-          <h5 className="text-lg font-medium text-gray-900">
-            {activity.activity}
-          </h5>
-        </div>
-        {activity.location && (
-          <div className="flex items-center gap-1 mt-1 text-sm text-gray-600">
-            <MapPin className="w-4 h-4" />
-            <span>{activity.location.name}</span>
-          </div>
-        )}
-        {activity.description && (
-          <p className="mt-2 text-gray-600">{activity.description}</p>
-        )}
-        {activity.cost && (
-          <div className="mt-2 flex items-center gap-1 text-sm text-gray-600">
-            <DollarSign className="w-4 h-4" />
-            <span>
-              {activity.cost.amount} {activity.cost.currency}
-            </span>
-          </div>
-        )}
-        {activity.notes && activity.notes.length > 0 && (
-          <div className="mt-2 text-sm text-gray-500">
-            {activity.notes.map((note, index) => (
-              <div key={index} className="italic">
-                • {note}
-              </div>
-            ))}
-          </div>
-        )}
-        {activity.booking_info && activity.booking_info.required && (
-          <div className="mt-2 text-sm text-blue-600">
-            <strong>Booking required:</strong>{" "}
-            {activity.booking_info.instructions}
-          </div>
-        )}
-      </div>
-    </div>
-  );
 
   if (!itinerary) {
     return (
@@ -182,7 +127,7 @@ export default function ItineraryPage() {
                 <MapPin className="w-5 h-5 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-500">Destinations</p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {itinerary.destinations.map((destination, index) => (
                       <span
                         key={index}
@@ -199,7 +144,9 @@ export default function ItineraryPage() {
                 <div>
                   <p className="text-sm text-gray-500">Duration</p>
                   <p className="font-medium text-gray-900">
-                    {itinerary.trip_duration.total_days} days
+                    {itinerary.trip_duration.total_days} days (
+                    {itinerary.trip_duration.start_date} to{" "}
+                    {itinerary.trip_duration.end_date})
                   </p>
                 </div>
               </div>
@@ -208,9 +155,9 @@ export default function ItineraryPage() {
                 <div>
                   <p className="text-sm text-gray-500">Budget Estimate</p>
                   <p className="font-medium text-gray-900">
-                    {itinerary.total_budget_estimate.currency}{" "}
-                    {itinerary.total_budget_estimate.low} -{" "}
-                    {itinerary.total_budget_estimate.high}
+                    {itinerary.estimated_costs.currency}{" "}
+                    {itinerary.estimated_costs.minimum_total} -{" "}
+                    {itinerary.estimated_costs.maximum_total}
                   </p>
                 </div>
               </div>
@@ -220,168 +167,28 @@ export default function ItineraryPage() {
 
         {/* Daily Itinerary */}
         <div className="space-y-8">
-          {itinerary.days.map((day, index) => (
+          {itinerary.daily_itinerary.map((day, index) => (
             <div
               key={index}
               className="bg-white/90 backdrop-blur-sm border border-gray-200/80 rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-shadow duration-200"
             >
               {/* Day Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div className="flex items-start gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 ">
+                <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
                     <Calendar className="w-6 h-6 text-white" />
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-1">
                     <h3 className="text-2xl font-semibold text-gray-900">
-                      Day {day.day_number}
+                      Day {day.day_number} : {day.title || "Untitled"}
                     </h3>
                     <p className="text-gray-600">{day.date}</p>
-                    {day.themes && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {day.themes.map((theme, themeIndex) => (
-                          <span
-                            key={themeIndex}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                          >
-                            {theme}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Morning Activities */}
-              {day.morning && day.morning.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Morning
-                  </h4>
-                  <div className="space-y-6">
-                    {day.morning.map((activity, actIndex) => (
-                      <div key={actIndex}>{renderActivity(activity)}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Afternoon Activities */}
-              {day.afternoon && day.afternoon.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Afternoon
-                  </h4>
-                  <div className="space-y-6">
-                    {day.afternoon.map((activity, actIndex) => (
-                      <div key={actIndex}>{renderActivity(activity)}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Evening Activities */}
-              {day.evening && day.evening.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Evening
-                  </h4>
-                  <div className="space-y-6">
-                    {day.evening.map((activity, actIndex) => (
-                      <div key={actIndex}>{renderActivity(activity)}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Transportation */}
-              {day.transportation && day.transportation.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium text-gray-900 mb-4">
-                    Transportation
-                  </h4>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {day.transportation.map((transport, index) => (
-                      <div
-                        key={index}
-                        className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="font-medium text-gray-900">
-                            {transport.type}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {transport.route && (
-                            <p className="text-gray-600">
-                              <span className="font-medium">Route:</span>{" "}
-                              {transport.route}
-                            </p>
-                          )}
-                          {transport.duration && (
-                            <p className="text-gray-600">
-                              <span className="font-medium">Duration:</span>{" "}
-                              {transport.duration}
-                            </p>
-                          )}
-                          {transport.cost && (
-                            <p className="text-gray-600">
-                              <span className="font-medium">Cost:</span>{" "}
-                              {transport.cost.amount} {transport.cost.currency}
-                            </p>
-                          )}
-                          {transport.frequency && (
-                            <p className="text-gray-600">
-                              <span className="font-medium">Frequency:</span>{" "}
-                              {transport.frequency}
-                            </p>
-                          )}
-                          {transport.booking_info && (
-                            <p className="text-sm text-blue-600 mt-2">
-                              {transport.booking_info}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Daily Budget */}
-              {day.daily_budget_estimate && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <DollarSign className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Daily Budget Estimate
-                    </h4>
-                  </div>
-                  <p className="text-gray-700">
-                    {day.daily_budget_estimate.currency}{" "}
-                    {day.daily_budget_estimate.low} -{" "}
-                    {day.daily_budget_estimate.high}
-                  </p>
-                </div>
-              )}
-
-              {/* Important Notes */}
-              {day.important_notes && day.important_notes.length > 0 && (
-                <div className="mt-6 bg-yellow-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Star className="w-5 h-5 text-yellow-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Important Notes
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {day.important_notes.map((note, index) => (
-                      <li key={index} className="text-gray-700">
-                        • {note}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              {day.description && (
+                <p className="text-gray-600">{day.description}</p>
               )}
             </div>
           ))}
@@ -392,107 +199,41 @@ export default function ItineraryPage() {
           <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
             <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
               <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-blue-50 to-teal-50 flex items-center justify-center">
-                  <Utensils className="w-5 h-5 text-blue-600" />
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
+                  <Utensils className="w-6 h-6 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    Dining
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Recommended places to eat during your trip
-                  </p>
-                </div>
+                <h2 className="text-2xl font-semibold text-gray-900">Dining</h2>
               </div>
             </div>
             <div className="p-6 sm:p-8 grid grid-cols-1 gap-6">
-              {itinerary.dining.map((dining, index) => (
+              {itinerary.dining.map((city, index) => (
                 <div
                   key={index}
                   className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <MapPin className="w-5 h-5 text-blue-600" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900">
-                      {dining.city}
+                      {city.city}
                     </h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {dining.meal_options.map((meal, recIndex) => (
+                    {city.recommendations.map((recommendation, recIndex) => (
                       <div
                         key={recIndex}
                         className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
                       >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-medium text-gray-900">
-                              {meal.meal_type}
-                            </h4>
-                            <div className="grid grid-cols-1 gap-4">
-                              {meal.restaurants.map((restaurant, resIndex) => (
-                                <div
-                                  key={resIndex}
-                                  className="mt-4 border-b border-gray-200/80 p-4 border-dashed bg-gradient-to-r from-blue-50 to-teal-50"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <div>
-                                      <h5 className="text-sm font-medium text-gray-900">
-                                        {restaurant.name}
-                                      </h5>
-                                      <p className="text-xs text-gray-600">
-                                        {restaurant.cuisine}
-                                      </p>
-                                      <div className="mt-2 flex items-center gap-1">
-                                        <span className="text-xs font-medium text-blue-600">
-                                          {restaurant.price_range.currency}{" "}
-                                          {restaurant.price_range.low} -{" "}
-                                          {restaurant.price_range.high}
-                                        </span>
-                                      </div>
-                                      <div className="mt-2 space-y-1">
-                                        <p className="text-xs text-gray-500">
-                                          Address: {restaurant.address}
-                                        </p>
-                                        <div className="flex flex-wrap gap-1">
-                                          <p className="text-xs text-gray-500 italic">Pros:</p>
-                                          <div className="flex flex-wrap">
-                                            {restaurant.pros.map(
-                                              (pro, proIndex) => (
-                                                <span
-                                                  key={proIndex}
-                                                  className="inline-flex items-center rounded-full text-xs font-medium text-green-600 italic"
-                                                >
-                                                  {'- '}{pro}
-                                                </span>
-                                              )
-                                            )}
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                          <p className="text-xs text-gray-500 italic">Cons:</p>
-                                          <div className="flex flex-wrap">
-                                            {restaurant.cons.map(
-                                              (con, conIndex) => (
-                                                <span
-                                                  key={conIndex}
-                                                  className="inline-flex items-center rounded-full text-xs font-medium text-red-600 italic"
-                                                >
-                                                  {'- '}{con}
-                                                </span>
-                                              )
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <UtensilsCrossed className="w-5 h-5 text-blue-600" />
+                          <h3 className="text-lg font-medium text-gray-900">
+                            {recommendation.name}
+                          </h3>
                         </div>
+                        <p className="text-sm text-gray-600 italic">
+                          {recommendation.address}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -507,17 +248,12 @@ export default function ItineraryPage() {
           <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
             <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
               <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-r from-blue-50 to-teal-50 flex items-center justify-center">
-                  <Briefcase className="w-5 h-5 text-blue-600" />
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
+                  <Hotel className="w-6 h-6 text-white" />
                 </div>
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-900">
-                    Accommodation
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Recommended places to stay during your trip
-                  </p>
-                </div>
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Accommodation
+                </h2>
               </div>
             </div>
             <div className="p-6 sm:p-8 grid grid-cols-1 gap-6">
@@ -526,54 +262,29 @@ export default function ItineraryPage() {
                   key={index}
                   className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
                 >
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                      <MapPin className="w-4 h-4 text-blue-600" />
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900">
                       {city.city}
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {city.recommendations.map((recommendation, recIndex) => (
                       <div
                         key={recIndex}
                         className="bg-white rounded-lg p-6 hover:shadow-md transition-shadow duration-200"
                       >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-medium text-gray-900">
-                              {recommendation.name}
-                            </h4>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-2">
-                              {recommendation.type}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-medium text-blue-600">
-                              {recommendation.price_range.currency}{" "}
-                              {recommendation.price_range.low} -{" "}
-                              {recommendation.price_range.high}
-                            </p>
-                          </div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <HousePlus className="w-5 h-5 text-blue-600" />
+                          <h3 className="text-lg font-medium text-gray-900">
+                            {recommendation.name}
+                          </h3>
                         </div>
-                        <div className="mt-4 space-y-2">
-                          <div className="flex items-start gap-2">
-                            <MapPin className="w-4 h-4 text-gray-400 mt-1" />
-                            <p className="text-sm text-gray-600">
-                              {recommendation.location.address}
-                            </p>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <Star className="w-4 h-4 text-gray-400 mt-1" />
-                            <p className="text-sm text-gray-600">
-                              Near:{" "}
-                              {recommendation.location.proximity_highlights.join(
-                                ", "
-                              )}
-                            </p>
-                          </div>
-                        </div>
+                        <p className="text-sm text-gray-600 italic">
+                          {recommendation.address}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -583,332 +294,28 @@ export default function ItineraryPage() {
           </div>
         )}
 
-        {/* Essential Information */}
-        {itinerary.essential_information && (
+        {/* Hidden Gems */}
+        {itinerary.hidden_gems && (
           <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
             <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Essential Information
-              </h2>
-            </div>
-            <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Emergency Contacts */}
-              {itinerary.essential_information.emergency_contacts && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Emergency Contacts
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    {Object.entries(
-                      itinerary.essential_information.emergency_contacts
-                    ).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
-                        <span className="text-gray-600">{key}</span>
-                        <span className="font-medium text-gray-900">
-                          {value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-teal-600 flex items-center justify-center">
+                  <Gem className="w-6 h-6 text-white" />
                 </div>
-              )}
-
-              {/* Visa Requirements */}
-              {itinerary.essential_information.visa_requirements && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Globe2 className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Visa Requirements
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-gray-600">
-                      <strong>Visa Type:</strong>{" "}
-                      {itinerary.essential_information.visa_requirements.type}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Visa Cost:</strong>{" "}
-                      {
-                        itinerary.essential_information.visa_requirements.cost
-                          .currency
-                      }{" "}
-                      {
-                        itinerary.essential_information.visa_requirements.cost
-                          .amount
-                      }
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Visa Process:</strong>{" "}
-                      {
-                        itinerary.essential_information.visa_requirements
-                          .process
-                      }
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Local SIM and WiFi Advice */}
-              {itinerary.essential_information.local_sim_wifi_advice && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Globe2 className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Local SIM and WiFi Advice
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-gray-600">
-                      <strong>Local SIM Advice:</strong>{" "}
-                      {
-                        itinerary.essential_information.local_sim_wifi_advice
-                          .sim_advice
-                      }
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Local WiFi Advice:</strong>{" "}
-                      {
-                        itinerary.essential_information.local_sim_wifi_advice
-                          .wifi_advice
-                      }
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Cultural Tips */}
-              {itinerary.essential_information.cultural_tips && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Globe2 className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Cultural Tips
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {itinerary.essential_information.cultural_tips.map(
-                      (tip, index) => (
-                        <li key={index} className="text-gray-600">
-                          • {tip}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Weather Expectations */}
-              {itinerary.essential_information.weather_expectations && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Activity className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Weather Expectations
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-gray-600">
-                      <strong>Temperature:</strong>{" "}
-                      {
-                        itinerary.essential_information.weather_expectations
-                          .temperature_range
-                      }
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Precipitation:</strong>{" "}
-                      {
-                        itinerary.essential_information.weather_expectations
-                          .precipitation
-                      }
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Seasonal Notes:</strong>{" "}
-                      {
-                        itinerary.essential_information.weather_expectations
-                          .seasonal_notes
-                      }
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Safety Considerations */}
-              {itinerary.essential_information.safety_considerations && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Safety Considerations
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {itinerary.essential_information.safety_considerations.map(
-                      (tip, index) => (
-                        <li key={index} className="text-gray-600">
-                          • {tip}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Hidden Gems */}
-              {itinerary.essential_information.hidden_gems && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Star className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Hidden Gems
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {itinerary.essential_information.hidden_gems.map(
-                      (gem, index) => (
-                        <li key={index} className="text-gray-600">
-                          • {gem}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Photo Worthy Locations */}
-              {itinerary.essential_information.photo_worthy_locations && (
-                <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Camera className="w-5 h-5 text-blue-600" />
-                    <h4 className="text-lg font-medium text-gray-900">
-                      Photo Worthy Locations
-                    </h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {itinerary.essential_information.photo_worthy_locations.map(
-                      (location, index) => (
-                        <li key={index} className="text-gray-600">
-                          • {location}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Packing List */}
-        {itinerary.essential_information.packing_list && (
-          <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Packing List
-              </h2>
-            </div>
-            <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {itinerary.essential_information.packing_list.map(
-                (item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
-                  >
-                    <h4 className="text-lg font-medium text-gray-900">
-                      {item}
-                    </h4>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Local Transportation */}
-        {itinerary.essential_information.local_transportation && (
-          <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Local Transportation
-              </h2>
-            </div>
-            <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                <h4 className="text-lg font-medium text-gray-900">Options</h4>
-                <ul className="space-y-2">
-                  {itinerary.essential_information.local_transportation.options.map(
-                    (option, index) => (
-                      <li key={index} className="text-gray-600">
-                        • {option}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-              <div className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6">
-                <h4 className="text-lg font-medium text-gray-900">Tips</h4>
-                <ul className="space-y-2">
-                  {itinerary.essential_information.local_transportation.tips.map(
-                    (tip, index) => (
-                      <li key={index} className="text-gray-600">
-                        • {tip}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-              <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl p-6">
-                <h4 className="text-lg font-medium text-gray-900">
-                  Recommended Apps
-                </h4>
-                <ul className="space-y-2">
-                  {itinerary.essential_information.local_transportation.apps.map(
-                    (app, index) => (
-                      <li key={index} className="text-gray-600">
-                        • {app}
-                      </li>
-                    )
-                  )}
-                </ul>
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Hidden Gems
+                </h2>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Total Budget Estimate */}
-        {itinerary.total_budget_estimate && (
-          <div className="mt-8 bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-6 sm:px-8 py-6 border-b border-gray-200/80">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Total Budget Estimate
-              </h2>
-            </div>
-            <div className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl p-6">
-                <h4 className="text-lg font-medium text-gray-900">
-                  Total Budget
-                </h4>
-                <p className="text-gray-600">
-                  {itinerary.total_budget_estimate.currency}{" "}
-                  {itinerary.total_budget_estimate.low} -{" "}
-                  {itinerary.total_budget_estimate.high}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-blue-50 to-teal-50 rounded-xl p-6">
-                <h4 className="text-lg font-medium text-gray-900">Breakdown</h4>
-                <ul className="space-y-2">
-                  {Object.entries(
-                    itinerary.total_budget_estimate.breakdown
-                  ).map(([key, value], index) => (
-                    <li key={index} className="text-gray-600">
-                      • {key}: {value}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className="p-6 sm:p-8 grid grid-cols-1 gap-6">
+              {itinerary.hidden_gems.map((gem, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6"
+                >
+                  <h3 className="text-lg font-medium text-gray-900">{gem}</h3>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -22,7 +22,7 @@ export interface QuestionGroup {
 
 export interface TripAnswers {
   start_location: string;
-  destinations: string[];
+  destinations: string;
   budget: string;
   travel_style: string[];
   accommodation: string[];
@@ -30,154 +30,17 @@ export interface TripAnswers {
   group_size: string;
   transportation: string;
   dietary_restrictions?: string[];
-  special_requirements?: string[];
-  travel_season?: string;
+  special_requirements?: string;
   pace: string;
   start_date: string;
   end_date: string;
 }
 
-export interface DayItinerary {
-  day_number: number;
-  date?: string;
-  destination?: string;
-  themes?: string[];
-  morning?: Array<{
-    time?: string;
-    activity: string;
-    description?: string;
-    location?: string;
-    notes?: string;
-    cost?: string;
-  }>;
-  afternoon?: Array<{
-    time?: string;
-    activity: string;
-    description?: string;
-    location?: string;
-    notes?: string;
-    cost?: string;
-  }>;
-  evening?: Array<{
-    time?: string;
-    activity: string;
-    description?: string;
-    location?: string;
-    notes?: string;
-    cost?: string;
-  }>;
-  transportation?: Array<{
-    type: string;
-    route?: string;
-    cost?: string;
-    duration?: string;
-  }>;
-  daily_budget_estimate?: string;
-}
-
-export interface Location {
-  name: string;
-  address: string;
-  coordinates: string;
-}
-
-export interface BookingInfo {
-  required: boolean;
-  instructions: string;
-}
-
-export interface Cost {
-  amount: string;
-  currency: string;
-}
-
-export interface Activity {
-  time: string;
-  activity: string;
-  description: string;
-  location: Location;
-  cost: Cost;
-  booking_info: BookingInfo;
-  travel_time_from_previous: string;
-  notes: string[];
-}
-
-export interface DiningOption {
-  name: string;
-  cuisine: string;
-  cost_range: string;
-  address: string;
-  recommended_dishes: string[];
-  booking_required: boolean;
-  notes: string[];
-}
-
-export interface Dining {
-  city: string;
-  meal_options: MealOption[];
-}
-
-export interface MealOption {
-  meal_type: string; // e.g., breakfast, lunch, dinner
-  restaurants: Restaurant[];
-}
-
-export interface Restaurant {
-  name: string;
-  cuisine: string;
-  price_range: {
-    low: string;
-    high: string;
-    currency: string;
-  };
-  address: string;
-  pros: string[];
-  cons: string[];
-}
-
-export interface Transportation {
-  type: string;
-  route: string;
-  cost: Cost;
-  duration: string;
-  frequency: string;
-  booking_info: string;
-}
-
-export interface DailyBudgetEstimate {
-  low: string;
-  high: string;
-  currency: string;
-}
-
-export interface Day {
+export interface DailyItinerary {
   day_number: number;
   date: string;
-  destination: string;
-  themes: string[];
-  morning: Activity[];
-  afternoon: Activity[];
-  evening: Activity[];
-  transportation: Transportation[];
-  daily_budget_estimate: DailyBudgetEstimate;
-  important_notes: string[];
-}
-
-export interface AccommodationRecommendation {
-  name: string;
-  type: string;
-  price_range: {
-    low: string;
-    high: string;
-    currency: string;
-  };
-  location: {
-    address: string;
-    proximity_highlights: string[];
-  };
-  amenities: string[];
-  pros: string[];
-  cons: string[];
+  title: string;
+  description: string;
 }
 
 export interface Accommodation {
@@ -185,46 +48,19 @@ export interface Accommodation {
   recommendations: AccommodationRecommendation[];
 }
 
-export interface EssentialInformation {
-  emergency_contacts: Record<string, string>;
-  cultural_tips: string[];
-  packing_list: string[];
-  weather_expectations: {
-    temperature_range: string;
-    precipitation: string;
-    seasonal_notes: string;
-  };
-  visa_requirements: {
-    type: string;
-    process: string;
-    duration: string;
-    cost: Cost;
-  };
-  safety_considerations: string[];
-  local_transportation: {
-    options: string[];
-    tips: string[];
-    apps: string[];
-  };
-  local_sim_wifi_advice: {
-    sim_advice: string;
-    wifi_advice: string;
-  };
-  hidden_gems: string[];
-  photo_worthy_locations: string[];
+export interface AccommodationRecommendation {
+  name: string;
+  address: string;
 }
 
-export interface TotalBudgetEstimate {
-  low: string;
-  high: string;
-  currency: string;
-  breakdown: {
-    accommodation: string;
-    activities: string;
-    transportation: string;
-    food: string;
-    miscellaneous: string;
-  };
+export interface Dining {
+  city: string;
+  recommendations: DiningRecommendation[];
+}
+
+export interface DiningRecommendation {
+  name: string;
+  address: string;
 }
 
 export interface Itinerary {
@@ -235,11 +71,15 @@ export interface Itinerary {
     start_date: string;
     end_date: string;
   };
-  days: Day[];
-  dining: Dining[];
+  daily_itinerary: DailyItinerary[];
   accommodation: Accommodation[];
-  essential_information: EssentialInformation;
-  total_budget_estimate: TotalBudgetEstimate;
+  dining: Dining[];
+  hidden_gems: string[];
+  estimated_costs: {
+    currency: string;
+    minimum_total: number;
+    maximum_total: number;
+  };
 }
 
 export interface VacationAnswers {
