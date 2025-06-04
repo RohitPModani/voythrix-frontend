@@ -293,7 +293,7 @@ export default function VacationPlannerPage() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-4">
                       {/* Currency Dropdown */}
-                      <div className="relative w-32">
+                      <div className="relative w-24 sm:w-32">
                         <select
                           value={answers.currency || "USD"}
                           onChange={(e) =>
