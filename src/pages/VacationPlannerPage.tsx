@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../styles/date-input.css";
 import Navbar from "../components/Navbar";
 import VacationLoadingScreen from "../components/VacationLoadingScreen";
+import { currency } from "../data/currency";
 
 export default function VacationPlannerPage() {
   const [questionGroups, setQuestionGroups] = useState<QuestionGroup[]>([]);
@@ -132,6 +133,8 @@ export default function VacationPlannerPage() {
       return;
     }
 
+    const budgetString = answers.budget ? `${answers.currency || "USD"} ${answers.budget} per person` : "";
+
     setIsLoading(true);
     setIsItineraryReady(false);
     setError("");
@@ -142,7 +145,7 @@ export default function VacationPlannerPage() {
         departure_location: (answers.departure_location as string) || "",
         start_date: (answers.start_date as string) || "",
         end_date: (answers.end_date as string) || "",
-        budget: (answers.budget as string) || "",
+        budget: budgetString,
         preferred_region: (answers.preferred_region as string) || "",
         visa_flexibility: (answers.visa_flexibility as string) || "",
         special_requirements: (answers.special_requirements as string) || "",
@@ -286,7 +289,80 @@ export default function VacationPlannerPage() {
                   </p>
                 )}
 
-                {field.type === "text" ? (
+                {field.id === "budget" && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      {/* Currency Dropdown */}
+                      <div className="relative w-32">
+                        <select
+                          value={answers.currency || "USD"}
+                          onChange={(e) =>
+                            handleAnswer("currency", e.target.value)
+                          }
+                          className="w-full p-4 bg-white border border-gray-200 rounded-xl appearance-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        >
+                          {currency.map((curr) => (
+                            <option key={curr} value={curr}>
+                              {curr}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                          <svg
+                            className="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      {/* Minimum Budget Input */}
+                      <div className="flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Minimum"
+                          value={answers.budget || ""}
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === ""
+                                ? ""
+                                : Math.max(
+                                    0,
+                                    parseInt(e.target.value)
+                                  ).toString();
+                            handleAnswer("budget", value);
+                          }}
+                          className="w-full p-4 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dynamic help text */}
+                    <p className="text-sm text-gray-500">
+                      {answers.budget? (
+                        <>
+                          {answers.currency || "USD"}{" "}
+                          {answers.budget}{" "}
+                          per person
+                        </>
+                      ) : (
+                        "Enter your daily budget range per person"
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {field.type === "text" && field.id !== "budget" ? (
                   <input
                     type="text"
                     placeholder={field.placeholder}

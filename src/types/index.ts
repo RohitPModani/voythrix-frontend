@@ -23,6 +23,9 @@ export interface QuestionGroup {
 export interface TripAnswers {
   start_location: string;
   destinations: string;
+  currency?: string;
+  min_budget?: string;
+  max_budget?: string;
   budget: string;
   travel_style: string[];
   accommodation: string[];
@@ -87,6 +90,7 @@ export interface VacationAnswers {
   departure_location: string;
   start_date: string;
   end_date: string;
+  currency?: string;
   budget: string;
   preferred_region?: string;
   visa_flexibility: string;
